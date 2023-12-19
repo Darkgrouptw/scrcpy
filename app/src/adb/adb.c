@@ -27,6 +27,9 @@
 static const char *adb_executable;
 
 #define WSL_USE_ADB_FEATURE
+#if defined WSL_USE_ADB_FEATURE
+const char wslLocation[] = "\\\\wsl.localhost\Ubuntu";
+#endif
 
 const char *
 sc_adb_get_executable(void) {
@@ -307,7 +310,15 @@ sc_adb_reverse_remove(struct sc_intr *intr, const char *serial,
 bool
 sc_adb_push(struct sc_intr *intr, const char *serial, const char *local,
             const char *remote, unsigned flags) {
-#ifdef __WINDOWS__
+#if defined(WSL_USE_ADB_FEATURE)
+    size_t wslLen = strlen(wslLocation);
+    size_t localLen = strlen(local);
+    char *finalLocal = malloc(wslLen + localLen + 1);
+    memccpy(&finalLocal[0],         wslLocation,    strlen(wslLen));
+    memccpy(&finalLocal[wslLen],    wslLocation,    strlen(localLen));
+    finalLocal[wslLen + localLen] = '\0';
+    LOGI("WSL finalLocal Path: %s", finalLocal);
+#elif defined(__WINDOWS__)
     // Windows will parse the string, so the paths must be quoted
     // (see sys/win/command.c)
     local = sc_str_quote(local);
