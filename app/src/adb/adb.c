@@ -26,12 +26,20 @@
 
 static const char *adb_executable;
 
+#define WSL_USE_ADB_FEATURE
+
 const char *
 sc_adb_get_executable(void) {
     if (!adb_executable) {
         adb_executable = getenv("ADB");
-        if (!adb_executable)
+        if (!adb_executable) {
+#if defined(WSL_USE_ADB_FEATURE)
+            adb_executable = "adb.exe";
+            LOGI("WSL will change adb to adb.exe %s", adb_executable);
+#else
             adb_executable = "adb";
+#endif
+        }
     }
     return adb_executable;
 }
