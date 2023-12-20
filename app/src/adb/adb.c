@@ -318,6 +318,7 @@ sc_adb_push(struct sc_intr *intr, const char *serial, const char *local,
     memcpy(&finalLocal[wslLen],    local,           localLen);
     finalLocal[wslLen + localLen] = '\0';
     LOGI("WSL finalLocal Path: %s", finalLocal);
+    local = finalLocal;
 #elif defined(__WINDOWS__)
     // Windows will parse the string, so the paths must be quoted
     // (see sys/win/command.c)
