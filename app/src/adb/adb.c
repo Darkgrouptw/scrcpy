@@ -28,7 +28,7 @@ static const char *adb_executable;
 
 #define WSL_USE_ADB_FEATURE
 #if defined WSL_USE_ADB_FEATURE
-const char wslLocation[] = "\\\\wsl.localhost\Ubuntu";
+const char wslLocation[] = "\\\\wsl.localhost\\Ubuntu";
 #endif
 
 const char *
@@ -314,8 +314,8 @@ sc_adb_push(struct sc_intr *intr, const char *serial, const char *local,
     size_t wslLen = strlen(wslLocation);
     size_t localLen = strlen(local);
     char *finalLocal = malloc(wslLen + localLen + 1);
-    memccpy(&finalLocal[0],         wslLocation,    strlen(wslLen));
-    memccpy(&finalLocal[wslLen],    wslLocation,    strlen(localLen));
+    memcpy(&finalLocal[0],         wslLocation,     wslLen);
+    memcpy(&finalLocal[wslLen],    local,           localLen);
     finalLocal[wslLen + localLen] = '\0';
     LOGI("WSL finalLocal Path: %s", finalLocal);
 #elif defined(__WINDOWS__)
